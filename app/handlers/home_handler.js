@@ -1,11 +1,16 @@
 module.exports = {
 	index: function(req, res) {
-		res.render('home/index', {
-		});
+		return {
+			data: "hello"
+		}
 	},
 
 	show: function(req, res) {
-		res.render('home/show', {
-		});
+	},
+
+	forced: function(req, res) {
+		return {
+			render: "home/render"
+		}
 	}
 };

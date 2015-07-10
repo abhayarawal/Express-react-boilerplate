@@ -28,7 +28,19 @@ module.exports = (function(app) {
 		// note : run more validation
 		
 		if (proc in handlers)	{
-			app.get(uri, handlers[proc])
+			app.get(uri, function(req, res){
+				// render data to be sent to the view
+				render_data = handlers[proc](req, res) || {};
+				jade_template = proc.replace("#", "/");
+
+				// override the jade template if render is returned
+				if ("render" in render_data) {
+					jade_template = render_data['render'];
+				}
+
+				// use the naming convention to find and render the template
+				res.render(jade_template, render_data);
+			});
 		}
 		else {
 			throw new Error("Handler#action - " + proc + " not found");
