@@ -5,8 +5,9 @@ var app = express();
 var port = process.env.PORT || 8000;
 
 // initialize the application
-require('./core/initiate')(app);
+require('./core/initialize')(app);
 
+app.use(express.static('public'));
 
 // create server
 var server = app.listen(port, function() {
