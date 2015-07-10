@@ -1,0 +1,1 @@
+import AppComponent from './react_flux/components/app_component';

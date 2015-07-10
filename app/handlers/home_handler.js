@@ -15,17 +15,5 @@ module.exports = {
 	*/
 
 	index: function() {
-		return {
-			data: "hello"
-		}
-	},
-
-	show: function() {
-	},
-
-	forced: function() {
-		return {
-			render: "home/render"
-		}
 	}
 };
