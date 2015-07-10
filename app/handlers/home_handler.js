@@ -1,9 +1,11 @@
 module.exports = {
 	index: function(req, res) {
-		res.send("index page");
+		res.render('home/index', {
+		});
 	},
 
 	show: function(req, res) {
-		res.send("show page");
+		res.render('home/show', {
+		});
 	}
 };
