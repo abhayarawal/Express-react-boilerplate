@@ -1,0 +1,1 @@
+import AppComponent from './app/assets/es6/react-flux/components/app_component';
