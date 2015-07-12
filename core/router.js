@@ -31,15 +31,15 @@ module.exports = (function(app) {
 			app.get(uri, function(req, res){
 				// render data to be sent to the view
 				render_data = handlers[proc](req, res) || {};
-				jade_template = proc.replace("#", "/");
+				hbs_template = proc.replace("#", "/");
 
 				// override the jade template if render is returned
 				if ("render" in render_data) {
-					jade_template = render_data['render'];
+					hbs_template = render_data['render'];
 				}
 
 				// use the naming convention to find and render the template
-				res.render(jade_template, render_data);
+				res.render(hbs_template, render_data);
 			});
 		}
 		else {

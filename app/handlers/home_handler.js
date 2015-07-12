@@ -9,6 +9,7 @@ module.exports = {
 		return {  ------> view data																																 |
 			data: "Some data",																																			 |
 			render: "home/render" ------> override the default template <-----------------------------
+			layout: "" -----> override default layout. put new layout in the layouts folder
 		}
 	}
 
