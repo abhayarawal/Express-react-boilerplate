@@ -1,4 +1,5 @@
 import React from 'react';
+import TestComponent from './test_component';
 
 export class AppComponent extends React.Component {
 

@@ -16,10 +16,10 @@ module.exports = (function(app) {
 		extname: 'hbs', 
 
 		// need to explicitly define the layouts folder
-		layoutsDir: path.join(_views_dir, "/layouts"),
+		layoutsDir: path.join(_views_dir, "layouts"),
 
 		// define the partials folder
-		partialsDir: path.join(_views_dir, "/partials")
+		partialsDir: path.join(_views_dir, "partials")
 	}));
 
 	// set the view engine
