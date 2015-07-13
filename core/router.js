@@ -9,15 +9,16 @@ module.exports = (function (app) {
 	fs.readdir('app/handlers', function (err, files) {
 		files.forEach(function (file, idx) {
 
-			var handler_name = file.replace(/\..+$/, '');
-			var handler_object = require('../app/handlers/'+handler_name);
+			var handler_name = file.replace(/\..+$/, ''),
+					handler_object = require('../app/handlers/'+handler_name),
+					tmp;
 
-			var handler_action, _tmp;
-			for (handler_action in handler_object)
-			{
-				_tmp = handler_name.replace(/_handler/, '');
-				handlers[_tmp+"#"+handler_action] = handler_object[handler_action];
-			}
+			Object.keys(handler_object).forEach(function (handler_action) {
+
+				tmp = handler_name.replace(/_handler/, '');
+				handlers[tmp+"#"+handler_action] = handler_object[handler_action];
+
+			});
 		});
 
 

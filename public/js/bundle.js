@@ -47,7 +47,7 @@ var AppComponent = (function (_React$Component) {
 			return _react2['default'].createElement(
 				'h2',
 				null,
-				'React app component'
+				'React app component!'
 			);
 		}
 	}]);
