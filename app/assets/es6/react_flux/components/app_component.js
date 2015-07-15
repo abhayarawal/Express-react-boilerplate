@@ -1,74 +1,63 @@
 import React from 'react';
-import {TestComponent} from './test_component';
+// import {TestComponent} from './test_component';
 
-var ChatInput = React.createClass({
+var socket = io();
+
+var ConnectForm = React.createClass({
 	handleSubmit: function(e) {
 		e.preventDefault();
-		var message = React.findDOMNode(this.refs.message).value.trim();
-		this.props.onMessageSubmit(message);
-		React.findDOMNode(this.refs.message).value = '';
+
+		var location =  React.findDOMNode(this.refs.location).value.trim();
+		if (location.length === 4) {
+			this.props.connectNode(location);
+			React.findDOMNode(this.refs.location).value = "";
+		}
+
 		return;
 	},
 
 	render: function() {
 		return (
 			<form onSubmit={this.handleSubmit}>
-				<input type="text" placeholder="Type and hit enter .." ref="message" />
+				<input type="text" ref="location" />
 			</form>
 		);
 	}
 });
 
-var socket = io();
+var PlayerComponent = React.createClass({
+	getInitialState: () => {
+		return { $id: "", $sid: "" };
+	},
 
-var ChatMessage = React.createClass({
-	render: function() {
-		return (
-			<div>{this.props.message}</div>
-		);
-	}
-});
+	componentDidMount: function() {
+		socket.on('node:handshake', this.handshake);
+		socket.on('node:connect:confirm', this.update$sid);
+	},
 
-var ChatList = React.createClass({
+	update$sid: function ( params ) {
+		var {$id, $sid} = this.state;
+		$sid = params.$sid;
+		this.setState({$id, $sid});
+	},
+
+	handshake: function( params ) {
+		var {$id, $sid} = this.state;
+		$id = params.$id;
+		$sid = params.$sid;
+		this.setState({$id, $sid});
+	},
+
+	handleNodeConnect: function (location) {
+		socket.emit('node:connect', {location: location, $id: this.state.$id});
+	},
+
 	render: function () {
-		var MessageNodes = this.props.list.map(function (message) {
-			return (
-				<ChatMessage message={message.message} />
-			);
-		});
-		return (
-			<div class="chat-list">
-				{MessageNodes}
-			</div>
-		);
-	}
-});
-
-
-var ChatBox = React.createClass({
-	getInitialState: function() {
-		return {data: []};
-	},
-
-	componentDidMount: function () {
-		socket.on('chat message', this.messageReceived);
-	},
-
-	messageReceived: function(message) {;
-		var {data} = this.state;
-		data.push({message: message});
-		this.setState({data});
-	},
-
-	handleMessageSubmit: function(message) {
-		socket.emit('chat message', message);
-	},
-
-	render: function() {
 		return (
 			<div>
-				<ChatList list={this.state.data} />
-				<ChatInput onMessageSubmit={this.handleMessageSubmit} />
+				<h4>Video component {this.state.$id}</h4>
+				<p>To connect -> {this.state.$sid}</p>
+				<ConnectForm connectNode={this.handleNodeConnect} />
 			</div>
 		);
 	}
@@ -79,15 +68,11 @@ var AppComponent = React.createClass({
 	render: function () {
 		return (
 			<div>
-				<h2>Socket io chat</h2>
-				
-				<ChatBox />
+				<PlayerComponent />
 			</div>
 		);
 	}
 });
-
-
 
 React.render(
 	<AppComponent />,
