@@ -10,19 +10,7 @@ var _react_fluxComponentsApp_component2 = _interopRequireDefault(_react_fluxComp
 },{"./react_flux/components/app_component":2}],2:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-	value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
 var _react = require('react');
 
@@ -30,32 +18,104 @@ var _react2 = _interopRequireDefault(_react);
 
 var _test_component = require('./test_component');
 
-var _test_component2 = _interopRequireDefault(_test_component);
+var ChatInput = _react2['default'].createClass({
+	displayName: 'ChatInput',
 
-var AppComponent = (function (_React$Component) {
-	function AppComponent() {
-		_classCallCheck(this, AppComponent);
+	handleSubmit: function handleSubmit(e) {
+		e.preventDefault();
+		var message = _react2['default'].findDOMNode(this.refs.message).value.trim();
+		this.props.onMessageSubmit(message);
+		_react2['default'].findDOMNode(this.refs.message).value = '';
+		return;
+	},
 
-		_get(Object.getPrototypeOf(AppComponent.prototype), 'constructor', this).apply(this, arguments);
+	render: function render() {
+		return _react2['default'].createElement(
+			'form',
+			{ onSubmit: this.handleSubmit },
+			_react2['default'].createElement('input', { type: 'text', placeholder: 'Type and hit enter ..', ref: 'message' })
+		);
 	}
+});
 
-	_inherits(AppComponent, _React$Component);
+var socket = io();
 
-	_createClass(AppComponent, [{
-		key: 'render',
-		value: function render() {
-			return _react2['default'].createElement(
+var ChatMessage = _react2['default'].createClass({
+	displayName: 'ChatMessage',
+
+	render: function render() {
+		return _react2['default'].createElement(
+			'div',
+			null,
+			this.props.message
+		);
+	}
+});
+
+var ChatList = _react2['default'].createClass({
+	displayName: 'ChatList',
+
+	render: function render() {
+		var MessageNodes = this.props.list.map(function (message) {
+			return _react2['default'].createElement(ChatMessage, { message: message.message });
+		});
+		return _react2['default'].createElement(
+			'div',
+			{ 'class': 'chat-list' },
+			MessageNodes
+		);
+	}
+});
+
+var ChatBox = _react2['default'].createClass({
+	displayName: 'ChatBox',
+
+	getInitialState: function getInitialState() {
+		return { data: [] };
+	},
+
+	componentDidMount: function componentDidMount() {
+		socket.on('chat message', this.messageReceived);
+	},
+
+	messageReceived: function messageReceived(message) {
+		;
+		var data = this.state.data;
+
+		data.push({ message: message });
+		this.setState({ data: data });
+	},
+
+	handleMessageSubmit: function handleMessageSubmit(message) {
+		socket.emit('chat message', message);
+	},
+
+	render: function render() {
+		return _react2['default'].createElement(
+			'div',
+			null,
+			_react2['default'].createElement(ChatList, { list: this.state.data }),
+			_react2['default'].createElement(ChatInput, { onMessageSubmit: this.handleMessageSubmit })
+		);
+	}
+});
+
+var AppComponent = _react2['default'].createClass({
+	displayName: 'AppComponent',
+
+	render: function render() {
+		return _react2['default'].createElement(
+			'div',
+			null,
+			_react2['default'].createElement(
 				'h2',
 				null,
-				'React app component!'
-			);
-		}
-	}]);
-
-	return AppComponent;
-})(_react2['default'].Component);
-
-exports.AppComponent = AppComponent;
+				'Socket io chat'
+			),
+			_react2['default'].createElement(ChatBox, null)
+		);
+	}
+});
 
 _react2['default'].render(_react2['default'].createElement(AppComponent, null), document.getElementById('componentMount'));
 
