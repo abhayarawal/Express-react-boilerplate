@@ -16,5 +16,9 @@ module.exports = {
 	*/
 
 	index: function() {
+	},
+
+	show: function(req, res) {
+		res.send("HEllo");
 	}
 };
