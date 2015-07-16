@@ -16,6 +16,7 @@ module.exports = {
 	*/
 
 	index: function() {
+
 	},
 
 	show: function(req, res) {

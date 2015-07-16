@@ -27,7 +27,7 @@ var ConnectForm = React.createClass({
 
 var PlayerComponent = React.createClass({
 	getInitialState: () => {
-		return { $id: "", $sid: "" };
+		return { $id: "", $sid: "", connected: false };
 	},
 
 	componentDidMount: function() {
@@ -36,9 +36,10 @@ var PlayerComponent = React.createClass({
 	},
 
 	update$sid: function ( params ) {
-		var {$id, $sid} = this.state;
+		var {$sid, connected} = this.state;
 		$sid = params.$sid;
-		this.setState({$id, $sid});
+		connected = true;
+		this.setState({$sid, connected});
 	},
 
 	handshake: function( params ) {
@@ -53,10 +54,13 @@ var PlayerComponent = React.createClass({
 	},
 
 	render: function () {
+		var _elm = `To connect to this node -> `;
+		if (this.state.connected) {	_elm = `Connected -> `;	}
+
 		return (
 			<div>
 				<h4>Video component {this.state.$id}</h4>
-				<p>To connect -> {this.state.$sid}</p>
+				<p>{_elm} {this.state.$sid}</p>
 				<ConnectForm connectNode={this.handleNodeConnect} />
 			</div>
 		);
@@ -78,3 +82,5 @@ React.render(
 	<AppComponent />,
 	document.getElementById('componentMount')
 );
+
+module.exports = AppComponent;

@@ -22,7 +22,6 @@ module.exports = (function(app, server) {
 		};
 		hash.push(store);
 
-
 		// events
 		socket.emit('node:handshake', {$id: store.$id, $sid: store.$sid});
 

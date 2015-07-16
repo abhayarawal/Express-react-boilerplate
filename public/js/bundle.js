@@ -48,7 +48,7 @@ var PlayerComponent = _react2["default"].createClass({
 	displayName: "PlayerComponent",
 
 	getInitialState: function getInitialState() {
-		return { $id: "", $sid: "" };
+		return { $id: "", $sid: "", connected: false };
 	},
 
 	componentDidMount: function componentDidMount() {
@@ -58,11 +58,12 @@ var PlayerComponent = _react2["default"].createClass({
 
 	update$sid: function update$sid(params) {
 		var _state = this.state;
-		var $id = _state.$id;
 		var $sid = _state.$sid;
+		var connected = _state.connected;
 
 		$sid = params.$sid;
-		this.setState({ $id: $id, $sid: $sid });
+		connected = true;
+		this.setState({ $sid: $sid, connected: connected });
 	},
 
 	handshake: function handshake(params) {
@@ -80,6 +81,11 @@ var PlayerComponent = _react2["default"].createClass({
 	},
 
 	render: function render() {
+		var _elm = "To connect to this node -> ";
+		if (this.state.connected) {
+			_elm = "Connected -> ";
+		}
+
 		return _react2["default"].createElement(
 			"div",
 			null,
@@ -92,7 +98,8 @@ var PlayerComponent = _react2["default"].createClass({
 			_react2["default"].createElement(
 				"p",
 				null,
-				"To connect -> ",
+				_elm,
+				" ",
 				this.state.$sid
 			),
 			_react2["default"].createElement(ConnectForm, { connectNode: this.handleNodeConnect })
@@ -113,6 +120,8 @@ var AppComponent = _react2["default"].createClass({
 });
 
 _react2["default"].render(_react2["default"].createElement(AppComponent, null), document.getElementById("componentMount"));
+
+module.exports = AppComponent;
 
 },{"react":159}],3:[function(require,module,exports){
 'use strict';
