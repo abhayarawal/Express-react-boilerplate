@@ -5,11 +5,39 @@ import Moment from 'moment';
 var socket = io();
 
 var VideoPlayer = React.createClass({
+	getInitialState: () => {
+		return {seek: 0};
+	},
+
+	componentDidMount: function() {
+		var videoplayer = React.findDOMNode(this.refs.videoplayer);
+
+		var sync = function() {
+			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
+			var videotime = Math.ceil(videoplayer.currentTime),
+					now = Moment();
+
+			var diff = now.diff(this.props.timestamp, "seconds")-1;
+
+			if (diff !== videotime) {
+				videoplayer.currentTime = diff;
+			}
+
+			this.setState({seek: diff});
+		};
+
+		setInterval(sync.bind(this), 500);
+	},
+
 	render: function() {
 		return (
-			<video src="/videos/timelapse.mp4" id="videoplayer" autoPlay>
-				Your stupid browser does not support html video. Get a life.
-			</video>
+			<div>
+				<video src="/videos/timelapse.mp4" id="videoplayer" ref="videoplayer" autoPlay>
+					Your stupid browser does not support html video. Get a life.
+				</video>
+
+				<p>Video at -> {this.state.seek} seconds</p>
+			</div>
 		);
 	}
 });
@@ -46,24 +74,6 @@ var PlayerComponent = React.createClass({
 		socket.on('node:connect:confirm', this.update$sid);
 	},
 
-	intervalSync: function() {
-		var videoplayer = document.getElementById("videoplayer");
-
-		var sync = function() {
-			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
-			var videotime = Math.ceil(videoplayer.currentTime),
-					now = Moment();
-
-			var diff = now.diff(this.state.timestamp, "seconds")-1;
-
-			if (diff !== videotime) {
-				videoplayer.currentTime = diff;
-			}
-		};
-
-		setInterval(sync.bind(this), 500);
-	},
-
 	update$sid: function ( params ) {
 		var {$sid, connected, timestamp} = this.state;
 		if (!connected) {
@@ -71,7 +81,6 @@ var PlayerComponent = React.createClass({
 			connected = true;
 			timestamp = Moment(params.timestamp);
 			this.setState({$sid, connected, timestamp});
-			this.intervalSync();
 		}
 	},
 
@@ -95,7 +104,7 @@ var PlayerComponent = React.createClass({
 				<h4>Video component {this.state.$id}</h4>
 				<p>{elm} {this.state.$sid}</p>
 				{ this.state.connected ? null : <ConnectForm connectNode={this.handleNodeConnect} /> }
-				{ this.state.connected ? <VideoPlayer /> : null } 
+				{ this.state.connected ? <VideoPlayer timestamp={this.state.timestamp} /> : null } 
 			</div>
 		);
 	}

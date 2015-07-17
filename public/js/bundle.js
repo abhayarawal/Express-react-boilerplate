@@ -27,11 +27,46 @@ var socket = io();
 var VideoPlayer = _react2['default'].createClass({
 	displayName: 'VideoPlayer',
 
+	getInitialState: function getInitialState() {
+		return { seek: 0 };
+	},
+
+	componentDidMount: function componentDidMount() {
+		var videoplayer = _react2['default'].findDOMNode(this.refs.videoplayer);
+
+		var sync = function sync() {
+			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
+			var videotime = Math.ceil(videoplayer.currentTime),
+			    now = (0, _moment2['default'])();
+
+			var diff = now.diff(this.props.timestamp, 'seconds') - 1;
+
+			if (diff !== videotime) {
+				videoplayer.currentTime = diff;
+			}
+
+			this.setState({ seek: diff });
+		};
+
+		setInterval(sync.bind(this), 500);
+	},
+
 	render: function render() {
 		return _react2['default'].createElement(
-			'video',
-			{ src: '/videos/timelapse.mp4', id: 'videoplayer', autoPlay: true },
-			'Your stupid browser does not support html video. Get a life.'
+			'div',
+			null,
+			_react2['default'].createElement(
+				'video',
+				{ src: '/videos/timelapse.mp4', id: 'videoplayer', ref: 'videoplayer', autoPlay: true },
+				'Your stupid browser does not support html video. Get a life.'
+			),
+			_react2['default'].createElement(
+				'p',
+				null,
+				'Video at -> ',
+				this.state.seek,
+				' seconds'
+			)
 		);
 	}
 });
@@ -72,24 +107,6 @@ var PlayerComponent = _react2['default'].createClass({
 		socket.on('node:connect:confirm', this.update$sid);
 	},
 
-	intervalSync: function intervalSync() {
-		var videoplayer = document.getElementById('videoplayer');
-
-		var sync = function sync() {
-			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
-			var videotime = Math.ceil(videoplayer.currentTime),
-			    now = (0, _moment2['default'])();
-
-			var diff = now.diff(this.state.timestamp, 'seconds') - 1;
-
-			if (diff !== videotime) {
-				videoplayer.currentTime = diff;
-			}
-		};
-
-		setInterval(sync.bind(this), 500);
-	},
-
 	update$sid: function update$sid(params) {
 		var _state = this.state;
 		var $sid = _state.$sid;
@@ -101,7 +118,6 @@ var PlayerComponent = _react2['default'].createClass({
 			connected = true;
 			timestamp = (0, _moment2['default'])(params.timestamp);
 			this.setState({ $sid: $sid, connected: connected, timestamp: timestamp });
-			this.intervalSync();
 		}
 	},
 
@@ -142,7 +158,7 @@ var PlayerComponent = _react2['default'].createClass({
 				this.state.$sid
 			),
 			this.state.connected ? null : _react2['default'].createElement(ConnectForm, { connectNode: this.handleNodeConnect }),
-			this.state.connected ? _react2['default'].createElement(VideoPlayer, null) : null
+			this.state.connected ? _react2['default'].createElement(VideoPlayer, { timestamp: this.state.timestamp }) : null
 		);
 	}
 });
