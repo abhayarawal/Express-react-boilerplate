@@ -28,14 +28,13 @@ var VideoPlayer = _react2['default'].createClass({
 	displayName: 'VideoPlayer',
 
 	getInitialState: function getInitialState() {
-		return { seek: 0 };
+		return { diff: 0 };
 	},
 
 	componentDidMount: function componentDidMount() {
 		var videoplayer = _react2['default'].findDOMNode(this.refs.videoplayer);
 
 		var sync = function sync() {
-			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
 			var videotime = Math.ceil(videoplayer.currentTime),
 			    now = (0, _moment2['default'])();
 
@@ -45,7 +44,7 @@ var VideoPlayer = _react2['default'].createClass({
 				videoplayer.currentTime = diff;
 			}
 
-			this.setState({ seek: diff });
+			this.setState({ diff: diff });
 		};
 
 		setInterval(sync.bind(this), 500);
@@ -57,14 +56,14 @@ var VideoPlayer = _react2['default'].createClass({
 			null,
 			_react2['default'].createElement(
 				'video',
-				{ src: '/videos/timelapse.mp4', id: 'videoplayer', ref: 'videoplayer', autoPlay: true },
-				'Your stupid browser does not support html video. Get a life.'
+				{ src: '/videos/timelapse.mp4', ref: 'videoplayer', autoPlay: 'True', controls: 'True' },
+				'Your stupid browser does not support html video. Get a better browser.'
 			),
 			_react2['default'].createElement(
 				'p',
 				null,
 				'Video at -> ',
-				this.state.seek,
+				this.state.diff,
 				' seconds'
 			)
 		);

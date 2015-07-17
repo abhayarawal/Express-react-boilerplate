@@ -6,14 +6,13 @@ var socket = io();
 
 var VideoPlayer = React.createClass({
 	getInitialState: () => {
-		return {seek: 0};
+		return {diff: 0};
 	},
 
 	componentDidMount: function() {
 		var videoplayer = React.findDOMNode(this.refs.videoplayer);
 
 		var sync = function() {
-			// socket.emit('node:video:sync', {timestamp: videoplayer.currentTime, $sid: this.state.$sid});
 			var videotime = Math.ceil(videoplayer.currentTime),
 					now = Moment();
 
@@ -23,7 +22,7 @@ var VideoPlayer = React.createClass({
 				videoplayer.currentTime = diff;
 			}
 
-			this.setState({seek: diff});
+			this.setState({diff});
 		};
 
 		setInterval(sync.bind(this), 500);
@@ -32,11 +31,11 @@ var VideoPlayer = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<video src="/videos/timelapse.mp4" id="videoplayer" ref="videoplayer" autoPlay>
-					Your stupid browser does not support html video. Get a life.
+				<video src="/videos/timelapse.mp4" ref="videoplayer" autoPlay="True" controls="True">
+					Your stupid browser does not support html video. Get a better browser.
 				</video>
 
-				<p>Video at -> {this.state.seek} seconds</p>
+				<p>Video at -> {this.state.diff} seconds</p>
 			</div>
 		);
 	}
