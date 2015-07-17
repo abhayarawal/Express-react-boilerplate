@@ -1,6 +1,7 @@
 var Redis = require('ioredis'),
 		SocketIO = require('socket.io'),
-		_ = require('underscore');
+		_ = require('underscore'),
+		moment = require('moment');
 
 module.exports = (function(app, server) {
 
@@ -9,7 +10,8 @@ module.exports = (function(app, server) {
 			// redis = new Redis();
 
 	// prototype store; replace with redis datastore (what about the socket???)
-	var hash = [];
+	var hash = [],
+			sessions = {};
 
 	// establish socket connection
 	io.on('connection', function(socket) {
@@ -36,8 +38,23 @@ module.exports = (function(app, server) {
 			});
 
 			if (target !== null && reqNode !== null) {
-				hash[reqNode].$sid = hash[target].$sid;
-				hash[reqNode].socket.emit('node:connect:confirm', {$sid: hash[reqNode].$sid});
+				_$sid = hash[target].$sid;
+
+				hash[reqNode].$sid = _$sid;
+
+				if (_$sid in sessions) {
+					sessions[_$sid].$ids.push(reqNode);
+				}
+				else {
+					sessions[_$sid] = {
+						$ids: [target, reqNode],
+						timestamp: moment()
+					}
+				}
+
+				sessions[_$sid].$ids.forEach(function (id) {
+					hash[id].socket.emit('node:connect:confirm', {$sid: hash[reqNode].$sid, timestamp: sessions[_$sid].timestamp});
+				});
 			}
 		});
 
