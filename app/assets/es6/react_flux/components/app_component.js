@@ -102,8 +102,7 @@ var PlayerComponent = React.createClass({
 			<div>
 				<h4>Video component {this.state.$id}</h4>
 				<p>{elm} {this.state.$sid}</p>
-				{ this.state.connected ? null : <ConnectForm connectNode={this.handleNodeConnect} /> }
-				{ this.state.connected ? <VideoPlayer timestamp={this.state.timestamp} /> : null } 
+				{ this.state.connected ? <VideoPlayer timestamp={this.state.timestamp} /> : <ConnectForm connectNode={this.handleNodeConnect} /> } 
 			</div>
 		);
 	}
