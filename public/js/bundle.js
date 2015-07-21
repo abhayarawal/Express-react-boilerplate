@@ -47,7 +47,12 @@ var VideoPlayer = _react2['default'].createClass({
 			this.setState({ diff: diff });
 		};
 
-		setInterval(sync.bind(this), 500);
+		var syncInterval = setInterval(sync.bind(this), 500);
+
+		videoplayer.addEventListener('ended', function () {
+			clearInterval(syncInterval);
+			console.log('ended');
+		}, false);
 	},
 
 	render: function render() {
@@ -156,8 +161,7 @@ var PlayerComponent = _react2['default'].createClass({
 				' ',
 				this.state.$sid
 			),
-			this.state.connected ? null : _react2['default'].createElement(ConnectForm, { connectNode: this.handleNodeConnect }),
-			this.state.connected ? _react2['default'].createElement(VideoPlayer, { timestamp: this.state.timestamp }) : null
+			this.state.connected ? _react2['default'].createElement(VideoPlayer, { timestamp: this.state.timestamp }) : _react2['default'].createElement(ConnectForm, { connectNode: this.handleNodeConnect })
 		);
 	}
 });

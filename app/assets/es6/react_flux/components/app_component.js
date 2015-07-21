@@ -25,7 +25,11 @@ var VideoPlayer = React.createClass({
 			this.setState({diff});
 		};
 
-		setInterval(sync.bind(this), 500);
+		var syncInterval = setInterval(sync.bind(this), 500);
+
+		videoplayer.addEventListener('ended', () => {
+			clearInterval(syncInterval);
+		}, false);
 	},
 
 	render: function() {
